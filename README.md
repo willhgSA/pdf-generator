@@ -48,12 +48,22 @@ pdf-generator/
 │   ├── config/
 │   │   ├── airtable.js
 │   │   └── swagger.js
+│   ├── data/
+│   │   ├── sample-data.js
+│   │   └── test-data.json
 │   ├── templates/
-│   │   ├── media-plan.hbs
+│   │   ├── media-plan/
+│   │   │   ├── template.hbs
+│   │   │   └── metadata.json
+│   │   ├── ... (otros templates)
 │   │   └── index.js
 │   └── index.js
+├── uploads/
 ├── .env
+├── .gitignore
+├── LICENSE
 ├── package.json
+├── package-lock.json
 └── README.md
 ```
 
@@ -77,26 +87,22 @@ pdf-generator/
 
 ### Dynamic Template Loading
 
-The system implements a dynamic template loading mechanism that allows adding new templates without modifying the code. Each template is organized in its own directory with the following structure:
+Templates are organized in subfolders under `src/templates/`, one folder per template. Each template folder must contain:
 
+- `template.hbs`: The Handlebars template file for the document
+- `metadata.json`: A JSON file describing the template's metadata and required data structure
+
+**Example:**
 ```
 src/templates/
-└── template-name/
-    ├── template.hbs    # The Handlebars template file
-    └── metadata.json   # Template configuration and validation
+└── media-plan/
+    ├── template.hbs
+    └── metadata.json
 ```
 
-### Template Directory Structure
+To add a new template, simply create a new folder inside `src/templates/` with the same structure. The system will automatically detect and load new templates at runtime—**no code changes, recompilation, or server restart required**.
 
-Each template directory must contain:
-
-1. **template.hbs**: The Handlebars template file containing the HTML and template logic
-2. **metadata.json**: Configuration file that defines:
-   - Template metadata (name, description, version, author)
-   - Data structure validation rules
-   - Required and optional fields
-
-Example metadata.json:
+#### metadata.json example
 ```json
 {
     "name": "Media Plan Analysis",
@@ -133,100 +139,14 @@ Example metadata.json:
 ```
 
 ### Features
-
-1. **Automatic Template Detection**
-   - Templates are automatically detected at startup
-   - New templates are loaded without server restart
-   - Changes to existing templates are detected and reloaded
-
-2. **Hot Reloading**
-   - Templates are watched for changes
-   - Automatic recompilation when files are modified
-   - No server restart required for template updates
-
-3. **Data Validation**
-   - Validates required fields
-   - Supports nested data structures
-   - Handles optional fields
-   - Provides clear error messages
-
-4. **Template Management**
-   - Easy template addition
-   - Centralized template registry
-   - Template metadata management
-   - Version control support
+- **Automatic template detection**: New templates are available instantly.
+- **Hot reloading**: Changes to templates or metadata are picked up without restarting the server.
+- **Validation**: Each template can define its required and optional fields in `metadata.json`.
 
 ### Adding a New Template
-
-1. Create a new directory in `src/templates/` with your template name
-2. Add `template.hbs` with your Handlebars template
-3. Create `metadata.json` with template configuration
-4. The system will automatically detect and load the template
-
-Example template.hbs:
-```handlebars
-<div class="header">
-    <h1>{{title}}</h1>
-    <p>Generated on: {{generatedDate}}</p>
-</div>
-
-{{#each items}}
-    <div class="item">
-        <h2>{{name}}</h2>
-        <p>{{description}}</p>
-        {{#if metrics}}
-            <div class="metrics">
-                {{#each metrics}}
-                    <div class="metric">
-                        <span>{{label}}:</span>
-                        <strong>{{value}}</strong>
-                    </div>
-                {{/each}}
-            </div>
-        {{/if}}
-    </div>
-{{/each}}
-```
-
-### Template Creation Process
-
-We recommend using an LLM (Large Language Model) to convert PDF templates into Handlebars templates. Here's the process:
-
-1. Prepare your inputs:
-   - PDF template (design/layout)
-   - JSON data structure (sample data)
-
-2. Use this prompt with an LLM:
-```
-I need to create a Handlebars template (.hbs) based on a PDF design and JSON data structure.
-
-PDF Design Requirements:
-[Describe or attach the PDF design]
-
-JSON Data Structure:
-[Include the JSON structure]
-
-Please create a Handlebars template that:
-1. Matches the PDF design exactly
-2. Uses the provided JSON structure for data
-3. Includes proper HTML and CSS
-4. Uses Handlebars syntax for dynamic content
-5. Handles all edge cases (empty data, optional sections)
-6. Is responsive and print-friendly
-7. Includes proper page breaks and styling for PDF generation
-
-The template should be production-ready and follow best practices for PDF generation.
-```
-
-3. Create the template files:
-   - Save the generated template as `template.hbs`
-   - Create the corresponding `metadata.json`
-   - Place both files in a new directory under `src/templates/`
-
-4. The template will be automatically available through the API
-   - No server restart required
-   - No code changes needed
-   - Immediate availability for use
+1. Create a new folder in `src/templates/` (e.g., `src/templates/my-new-template/`)
+2. Add your `template.hbs` and `metadata.json` inside that folder
+3. The template will be available immediately via the API
 
 ## API Endpoints
 
@@ -249,6 +169,41 @@ Request Body:
 
 ### POST /preview/{templateKey}
 Generates an HTML preview of the template with the provided data.
+
+### Example request body for /generate-pdf/media-plan
+
+```json
+{
+  "status": "approved",
+  "improved": "yes",
+  "reason": "All requirements met",
+  "plan_payload": {
+    "media_plan": [
+      {
+        "media_type": "Digital",
+        "outlets": [
+          {
+            "mediaoutletname": "Social Media",
+            "estimated_reach": "2.5M",
+            "budget_allocated": 50000,
+            "frequency": "Daily",
+            "justification": "High engagement with target audience",
+            "insertionorderinstructions": "Run native content and influencer partnerships"
+          }
+        ]
+      }
+    ],
+    "budget_total": 100000,
+    "budget_spent": 50000,
+    "budget_remaining": 50000,
+    "general_justification": {
+      "targeting": "Hispanic Millennials and African American Professionals",
+      "geographic_focus": "Major metropolitan areas",
+      "financialefficiencydetail_explained": "Cost-effective reach with high engagement potential"
+    }
+  }
+}
+```
 
 ## Available Templates
 
