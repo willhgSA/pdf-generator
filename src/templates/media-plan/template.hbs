@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Media Plan Analysis</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #0033A0;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .status-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .status-section h2 {
+            color: #0033A0;
+            margin-bottom: 15px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-needs-improvement {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .media-section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        .media-type {
+            background-color: #0033A0;
+            color: white;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .media-content {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .outlet-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .outlet-item:last-child {
+            border-bottom: none;
+        }
+        .outlet-item h3 {
+            color: #0033A0;
+            margin-bottom: 10px;
+        }
+        .outlet-item p {
+            margin: 5px 0;
+        }
+        .metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+        }
+        .metric {
+            text-align: center;
+        }
+        .metric-value {
+            font-weight: bold;
+            color: #0033A0;
+        }
+        .budget-summary {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .budget-summary h2 {
+            color: #0033A0;
+            margin-bottom: 15px;
+        }
+        .budget-metrics {
+            display: flex;
+            justify-content: space-between;
+        }
+        .budget-metric {
+            text-align: center;
+            flex: 1;
+        }
+        .budget-metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0033A0;
+        }
+        .justification-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .justification-section h2 {
+            color: #0033A0;
+            margin-bottom: 15px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+        .page-number {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Media Plan Analysis</h1>
+        <p>Generated on: {{generatedDate}}</p>
+    </div>
+
+    <div class="status-section">
+        <h2>Plan Status</h2>
+        <div class="status-badge status-{{status}}">{{status}}</div>
+        <p><strong>Improved:</strong> {{improved}}</p>
+        <p><strong>Reason:</strong> {{reason}}</p>
+    </div>
+
+    {{#each plan_payload.media_plan}}
+    <div class="media-section">
+        <div class="media-type">{{media_type}}</div>
+        <div class="media-content">
+            {{#each outlets}}
+            <div class="outlet-item">
+                <h3>{{mediaoutletname}}</h3>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Estimated Reach</div>
+                        <div class="metric-value">{{estimated_reach}}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Budget Allocated</div>
+                        <div class="metric-value">${{budget_allocated}}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Frequency</div>
+                        <div class="metric-value">{{frequency}}</div>
+                    </div>
+                </div>
+                <p><strong>Justification:</strong> {{justification}}</p>
+                <p><strong>Insertion Order Instructions:</strong> {{insertionorderinstructions}}</p>
+                {{#if rate_analysis}}
+                <div class="rate-analysis">
+                    <h4>Rate Analysis</h4>
+                    <p><strong>Rate Source:</strong> {{rate_analysis.ratesource}}</p>
+                    <p><strong>Calculation Reference:</strong> {{rate_analysis.calculation_reference}}</p>
+                    <p><strong>Selection Justification:</strong> {{rate_analysis.selection_justification}}</p>
+                </div>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/each}}
+
+    <div class="budget-summary">
+        <h2>Budget Summary</h2>
+        <div class="budget-metrics">
+            <div class="budget-metric">
+                <div class="metric-label">Total Budget</div>
+                <div class="budget-metric-value">${{plan_payload.budget_total}}</div>
+            </div>
+            <div class="budget-metric">
+                <div class="metric-label">Budget Spent</div>
+                <div class="budget-metric-value">${{plan_payload.budget_spent}}</div>
+            </div>
+            <div class="budget-metric">
+                <div class="metric-label">Budget Remaining</div>
+                <div class="budget-metric-value">${{plan_payload.budget_remaining}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="justification-section">
+        <h2>General Justification</h2>
+        <p><strong>Targeting:</strong> {{plan_payload.general_justification.targeting}}</p>
+        <p><strong>Geographic Focus:</strong> {{plan_payload.general_justification.geographic_focus}}</p>
+        <p><strong>Financial Efficiency:</strong> {{plan_payload.general_justification.financialefficiencydetail_explained}}</p>
+    </div>
+
+    <div class="footer">
+        <p>Media Plan Analysis Report</p>
+    </div>
+
+    <div class="page-number">
+        Page {{pageNumber}} of {{totalPages}}
+    </div>
+</body>
+</html> 

@@ -1,0 +1,30 @@
+{
+    "status": "approved",
+    "improved": "yes",
+    "reason": "All requirements met",
+    "plan_payload": {
+        "media_plan": [
+            {
+                "media_type": "Digital",
+                "outlets": [
+                    {
+                        "mediaoutletname": "Social Media",
+                        "estimated_reach": "2.5M",
+                        "budget_allocated": 50000,
+                        "frequency": "Daily",
+                        "justification": "High engagement with target audience",
+                        "insertionorderinstructions": "Run native content and influencer partnerships"
+                    }
+                ]
+            }
+        ],
+        "budget_total": 100000,
+        "budget_spent": 50000,
+        "budget_remaining": 50000,
+        "general_justification": {
+            "targeting": "Hispanic Millennials and African American Professionals",
+            "geographic_focus": "Major metropolitan areas",
+            "financialefficiencydetail_explained": "Cost-effective reach with high engagement potential"
+        }
+    }
+} 

@@ -1,0 +1,42 @@
+{
+    "name": "Media Plan Analysis",
+    "description": "Template for media plan analysis and reporting",
+    "version": "1.0.0",
+    "author": "Singular Design",
+    "dataStructure": {
+        "required": [
+            "status",
+            "improved",
+            "reason",
+            "plan_payload"
+        ],
+        "optional": [
+            "generatedDate"
+        ],
+        "plan_payload": {
+            "required": [
+                "media_plan",
+                "budget_total",
+                "budget_spent",
+                "budget_remaining",
+                "general_justification"
+            ],
+            "media_plan": {
+                "required": [
+                    "media_type",
+                    "outlets"
+                ],
+                "outlets": {
+                    "required": [
+                        "mediaoutletname",
+                        "estimated_reach",
+                        "budget_allocated",
+                        "frequency",
+                        "justification",
+                        "insertionorderinstructions"
+                    ]
+                }
+            }
+        }
+    }
+} 
