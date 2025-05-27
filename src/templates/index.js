@@ -88,6 +88,33 @@ fs.watch(path.join(__dirname), { recursive: true }, (eventType, filename) => {
     }
 });
 
+// Register Handlebars helpers
+handlebars.registerHelper('currency', function(value) {
+    if (typeof value !== 'number') {
+        value = Number(value);
+    }
+    if (isNaN(value)) return value;
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+});
+
+handlebars.registerHelper('number', function(value) {
+    if (typeof value !== 'number') {
+        value = Number(value);
+    }
+    if (isNaN(value)) return value;
+    return value.toLocaleString('en-US');
+});
+
+handlebars.registerHelper('formatCurrencyDollars', function(text) {
+    if (typeof text !== 'string') return text;
+    // Regex: busca $ seguido de números, opcionalmente entre paréntesis
+    return text.replace(/\$([0-9,]+(?:\.\d+)?)/g, (match, num) => {
+        const n = Number(num.replace(/,/g, ''));
+        if (isNaN(n)) return match;
+        return n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    });
+});
+
 // Template registry methods
 const templateRegistry = {
     /**
@@ -145,4 +172,30 @@ const templateRegistry = {
     }
 };
 
-module.exports = templateRegistry; 
+/**
+ * Validate data against template metadata (required fields only, recursive)
+ * @param {Object} data - Data to validate
+ * @param {Object} structure - Structure from metadata.json (usually metadata.dataStructure)
+ * @param {string} path - Current path (for nested fields)
+ * @returns {string[]} Array of missing field paths
+ */
+function validateTemplateData(data, structure, path = '') {
+    let errors = [];
+    if (!structure) return errors;
+    // Validate required fields at this level
+    if (Array.isArray(structure.required)) {
+        for (const field of structure.required) {
+            if (!(field in data)) {
+                errors.push(path ? `${path}.${field}` : field);
+            } else if (typeof structure[field] === 'object' && structure[field] !== null && !Array.isArray(structure[field])) {
+                // If the structure defines a nested object, validate recursively
+                errors = errors.concat(
+                    validateTemplateData(data[field], structure[field], path ? `${path}.${field}` : field)
+                );
+            }
+        }
+    }
+    return errors;
+}
+
+module.exports = { ...templateRegistry, validateTemplateData }; 

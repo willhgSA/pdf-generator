@@ -6,6 +6,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const templateRegistry = require('./templates');
 const { uploadPDFToAirtable } = require('./config/airtable');
+const { validateTemplateData } = require('./templates');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -122,6 +123,14 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
             });
         }
 
+        // Flexible validation: warn if missing fields, but always return PDF
+        const metadata = template;
+        const missingFields = validateTemplateData(data, metadata.dataStructure);
+        if (missingFields.length > 0) {
+            console.warn(`Warning: Missing required fields for template '${templateKey}':`, missingFields);
+            res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);
+        }
+
         // Prepare data for the template
         const templateData = {
             ...data,
@@ -143,10 +152,17 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
                 margin: {
                     top: '2cm',
                     right: '2cm',
-                    bottom: '2cm',
+                    bottom: '2.5cm',
                     left: '2cm'
                 },
-                printBackground: true
+                printBackground: true,
+                displayHeaderFooter: true,
+                headerTemplate: '<span></span>',
+                footerTemplate: `
+                  <div style="width:100%;font-size:10px;text-align:center;color:#666;">
+                    Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+                  </div>
+                `
             });
             await browser.close();
             return Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
@@ -244,6 +260,14 @@ app.post('/preview/:templateKey', (req, res) => {
             return res.status(404).json({
                 error: `Template ${templateKey} not found`
             });
+        }
+
+        // Flexible validation: warn if missing fields, but always return HTML
+        const metadata = template;
+        const missingFields = validateTemplateData(req.body, metadata.dataStructure);
+        if (missingFields.length > 0) {
+            console.warn(`Warning: Missing required fields for template '${templateKey}':`, missingFields);
+            res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);
         }
 
         const data = {

@@ -250,4 +250,46 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-For any questions or concerns, please open an issue in the repository. 
+For any questions or concerns, please open an issue in the repository.
+
+## Handlebars Helpers for Formatting
+
+The following Handlebars helpers are available for use in any template:
+
+- `{{currency value}}`: Formats a number as USD currency (e.g., $12,500.00).
+- `{{number value}}`: Formats a number with thousands separator (e.g., 12,500).
+- `{{formatCurrencyDollars text}}`: Formats only numbers in a string that are preceded by a `$` as USD currency (e.g., "$55000" → "$55,000.00"). Useful for sentences with mixed numbers and amounts.
+
+**Example usage in a template:**
+```handlebars
+<div>Total: {{currency total}}</div>
+<div>Items Sold: {{number items_sold}}</div>
+<p>{{formatCurrencyDollars calculation_reference}}</p>
+```
+
+---
+
+## Template Creation Process (Prompt for LLM)
+
+To create a new Handlebars template and its corresponding metadata.json from a PDF design and a sample JSON data structure, use the following prompt:
+
+```
+I need you to generate two files for a PDF generation system:
+1. A Handlebars template (.hbs) that matches the provided PDF design and uses the provided JSON data structure for dynamic content.
+2. A metadata.json file that describes the required and optional fields, and the nested structure of the JSON data needed by the template.
+
+**PDF Design:**
+[Describe or attach the PDF design here]
+
+**Sample JSON Data:**
+[Paste the JSON data structure here]
+
+**Instructions:**
+- The .hbs template should use Handlebars syntax for all dynamic fields and sections.
+- Use the helpers `currency`, `number`, and `formatCurrencyDollars` where appropriate for formatting amounts and numbers.
+- The metadata.json should specify all required and optional fields, including nested objects and arrays, matching the structure of the sample JSON.
+- The output should be production-ready and follow best practices for PDF generation.
+- Return both files: the .hbs template and the metadata.json.
+```
+
+--- 
