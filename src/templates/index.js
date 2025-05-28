@@ -128,6 +128,12 @@ handlebars.registerHelper('concat', function() {
     return Array.from(arguments).slice(0, -1).join('');
 });
 
+handlebars.registerHelper('toFileUrl', function(filePath) {
+    // Replace backslashes with forward slashes for file URLs
+    if (typeof filePath !== 'string') return filePath;
+    return filePath.replace(/\\/g, '/').replace(/\\/g, '/');
+});
+
 // Template registry methods
 const templateRegistry = {
     /**

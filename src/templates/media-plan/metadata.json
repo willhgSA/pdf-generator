@@ -3,6 +3,8 @@
     "description": "Template for media plan analysis and reporting",
     "version": "1.0.0",
     "author": "Singular Design",
+    "logo_url": "https://yourdomain.com/logos/",
+    "logo_filename": "grassroots-logo.jpg",
     "dataStructure": {
         "required": [
             "status",

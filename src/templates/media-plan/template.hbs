@@ -140,10 +140,7 @@
 </head>
 <body>
     <div class="header">
-        <div style="font-size:10px;color:#C3875B;">Ruta logo: {{templateDir}}/grassroots-logo.jpg</div>
-        {{#ifFileExists (concat templateDir "/grassroots-logo.jpg")}}
-          <img src="file://{{templateDir}}/grassroots-logo.jpg" alt="Grassroots Media Logo" style="height:60px; margin-bottom:10px;" />
-        {{/ifFileExists}}
+        <img src="{{logo_url}}{{logo_filename}}" alt="GR-MEDIA-LOGO" style="max-width: 200px; height: auto;">
         <h1>Media Plan Analysis</h1>
         <p>Generated on: {{generatedDate}}</p>
     </div>
