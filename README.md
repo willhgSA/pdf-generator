@@ -148,6 +148,35 @@ To add a new template, simply create a new folder inside `src/templates/` with t
 2. Add your `template.hbs` and `metadata.json` inside that folder
 3. The template will be available immediately via the API
 
+## Logo Configuration in Templates
+
+You can configure a logo for each template by specifying the following fields in the template's `metadata.json`:
+
+```json
+{
+  "logo_url": "https://yourdomain.com/logos/",
+  "logo_filename": "grassroots-logo.jpg"
+}
+```
+
+- `logo_url`: The base URL where your logos are hosted (e.g., a CDN, S3 bucket, or your own server).
+- `logo_filename`: The filename of the logo to use for this template.
+
+**In your Handlebars template, reference the logo like this:**
+```handlebars
+<img src="{{logo_url}}{{logo_filename}}" alt="GR-MEDIA-LOGO" style="max-width: 200px; height: auto;">
+```
+
+### Fallback Behavior
+
+If either `logo_url` or `logo_filename` is missing from `metadata.json`, the system will automatically use a placeholder image (e.g., from [via.placeholder.com](https://via.placeholder.com/200x50?text=No+Logo)) and will never throw an error. This ensures PDF generation is robust and portable.
+
+**Example Node.js fallback logic:**
+```js
+const logo_url = metadata.logo_url || 'https://via.placeholder.com/200x50?text=No+Logo&';
+const logo_filename = metadata.logo_filename || '';
+```
+
 ## API Endpoints
 
 ### GET /templates
@@ -278,36 +307,3 @@ You can use the `ifFileExists` and `concat` Handlebars helpers to conditionally 
   <img src="file://{{templateDir}}/grassroots-logo.jpg" alt="Grassroots Media Logo" style="height:60px; margin-bottom:10px;" />
 {{/ifFileExists}}
 ```
-
-- `templateDir` is automatically provided to the template and points to the directory of the current template.
-- The image will only be shown if the file exists in the template's directory.
-- If the image is missing, the PDF will be generated without the logo and without errors.
-
-This approach is recommended for any optional images or resources you want to include in your templates.
-
----
-
-## Template Creation Process (Prompt for LLM)
-
-To create a new Handlebars template and its corresponding metadata.json from a PDF design and a sample JSON data structure, use the following prompt:
-
-```
-I need you to generate two files for a PDF generation system:
-1. A Handlebars template (.hbs) that matches the provided PDF design and uses the provided JSON data structure for dynamic content.
-2. A metadata.json file that describes the required and optional fields, and the nested structure of the JSON data needed by the template.
-
-**PDF Design:**
-[Describe or attach the PDF design here]
-
-**Sample JSON Data:**
-[Paste the JSON data structure here]
-
-**Instructions:**
-- The .hbs template should use Handlebars syntax for all dynamic fields and sections.
-- Use the helpers `currency`, `number`, and `formatCurrencyDollars` where appropriate for formatting amounts and numbers.
-- The metadata.json should specify all required and optional fields, including nested objects and arrays, matching the structure of the sample JSON.
-- The output should be production-ready and follow best practices for PDF generation.
-- Return both files: the .hbs template and the metadata.json.
-```
-
---- 

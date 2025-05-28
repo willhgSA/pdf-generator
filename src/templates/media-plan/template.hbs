@@ -140,7 +140,11 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{logo_url}}{{logo_filename}}" alt="GR-MEDIA-LOGO" style="max-width: 200px; height: auto;">
+        {{#if logo_url}}
+          {{#if logo_filename}}
+            <img src="{{logo_url}}{{logo_filename}}" alt="GR-MEDIA-LOGO" style="max-width: 200px; height: auto;">
+          {{/if}}
+        {{/if}}
         <h1>Media Plan Analysis</h1>
         <p>Generated on: {{generatedDate}}</p>
     </div>
