@@ -80,7 +80,7 @@ app.get('/templates', (req, res) => {
  *             properties:
  *               record_id:
  *                 type: string
- *                 description: Airtable record ID to attach the PDF (required if saveToAirtable is true)
+ *                 description: Airtable record ID to attach the PDF to an existing Airtable record (required if saveToAirtable is true)
  *             allOf:
  *               - oneOf:
  *                   - $ref: '#/components/schemas/MediaPlanRequest'
@@ -132,11 +132,13 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
         }
 
         // Prepare data for the template
+        const templateDir = path.dirname(template.path);
         const templateData = {
             ...data,
             generatedDate: new Date().toLocaleDateString(),
             pageNumber: 1,
-            totalPages: 1
+            totalPages: 1,
+            templateDir
         };
 
         // Render the template with data
@@ -150,16 +152,16 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
             const pdfBuffer = await page.pdf({
                 format: 'A4',
                 margin: {
-                    top: '2cm',
+                    top: '3cm',
                     right: '2cm',
-                    bottom: '2.5cm',
+                    bottom: '3cm',
                     left: '2cm'
                 },
                 printBackground: true,
                 displayHeaderFooter: true,
-                headerTemplate: '<span></span>',
+                headerTemplate: ``,
                 footerTemplate: `
-                  <div style="width:100%;font-size:10px;text-align:center;color:#666;">
+                  <div style='width:calc(100% - 4cm);margin:0 auto;border-top:1px solid #C3875B;padding-top:8px;font-size:10px;text-align:center;color:#C3875B;'>
                     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
                   </div>
                 `
@@ -270,11 +272,13 @@ app.post('/preview/:templateKey', (req, res) => {
             res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);
         }
 
+        const templateDir = path.dirname(template.path);
         const data = {
             ...req.body,
             generatedDate: new Date().toLocaleDateString(),
             pageNumber: 1,
-            totalPages: 1
+            totalPages: 1,
+            templateDir
         };
         
         const html = templateRegistry.renderTemplate(templateKey, data);

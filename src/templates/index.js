@@ -115,6 +115,19 @@ handlebars.registerHelper('formatCurrencyDollars', function(text) {
     });
 });
 
+handlebars.registerHelper('ifFileExists', function(filePath, options) {
+    try {
+        if (fs.existsSync(filePath)) {
+            return options.fn(this);
+        }
+    } catch (e) {}
+    return options.inverse(this);
+});
+
+handlebars.registerHelper('concat', function() {
+    return Array.from(arguments).slice(0, -1).join('');
+});
+
 // Template registry methods
 const templateRegistry = {
     /**

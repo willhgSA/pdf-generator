@@ -267,6 +267,24 @@ The following Handlebars helpers are available for use in any template:
 <p>{{formatCurrencyDollars calculation_reference}}</p>
 ```
 
+## Optional Images in Templates
+
+You can use the `ifFileExists` and `concat` Handlebars helpers to conditionally display images (such as logos) in your templates. This ensures that if an image file is missing, the PDF will still be generated without errors.
+
+**Example usage in a template:**
+
+```handlebars
+{{#ifFileExists (concat templateDir "/grassroots-logo.jpg")}}
+  <img src="file://{{templateDir}}/grassroots-logo.jpg" alt="Grassroots Media Logo" style="height:60px; margin-bottom:10px;" />
+{{/ifFileExists}}
+```
+
+- `templateDir` is automatically provided to the template and points to the directory of the current template.
+- The image will only be shown if the file exists in the template's directory.
+- If the image is missing, the PDF will be generated without the logo and without errors.
+
+This approach is recommended for any optional images or resources you want to include in your templates.
+
 ---
 
 ## Template Creation Process (Prompt for LLM)
