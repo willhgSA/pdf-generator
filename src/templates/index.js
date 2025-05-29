@@ -89,6 +89,14 @@ fs.watch(path.join(__dirname), { recursive: true }, (eventType, filename) => {
 });
 
 // Register Handlebars helpers
+handlebars.registerHelper('sum', function(array, prop) {
+    if (!Array.isArray(array)) return 0;
+    return array.reduce((total, item) => {
+        const value = parseFloat(item[prop]) || 0;
+        return total + value;
+    }, 0);
+});
+
 handlebars.registerHelper('currency', function(value) {
     if (typeof value !== 'number') {
         value = Number(value);
@@ -198,6 +206,17 @@ const templateRegistry = {
  * @param {string} path - Current path (for nested fields)
  * @returns {string[]} Array of missing field paths
  */
+handlebars.registerHelper('eq', function(v1, v2) {
+    return v1 === v2;
+});
+
+handlebars.registerHelper('percentage', function(value, total) {
+    if (typeof value !== 'number') value = parseFloat(value) || 0;
+    if (typeof total !== 'number') total = parseFloat(total) || 1;
+    if (total === 0) return '0%';
+    return ((value / total) * 100).toFixed(1) + '%';
+});
+
 function validateTemplateData(data, structure, path = '') {
     let errors = [];
     if (!structure) return errors;
@@ -217,4 +236,4 @@ function validateTemplateData(data, structure, path = '') {
     return errors;
 }
 
-module.exports = { ...templateRegistry, validateTemplateData }; 
+module.exports = { ...templateRegistry, validateTemplateData };
