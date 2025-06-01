@@ -79,14 +79,16 @@ function loadTemplates() {
 // Initial template loading
 loadTemplates();
 
-// Watch for changes in templates directory
-fs.watch(path.join(__dirname), { recursive: true }, (eventType, filename) => {
-    if (filename) {
-        console.log(`Template change detected: ${filename}`);
-        // Reload templates when changes are detected
-        loadTemplates();
-    }
-});
+// Watch for changes in templates directory, but not in test environment
+if (process.env.NODE_ENV !== 'test') {
+    fs.watch(path.join(__dirname), { recursive: true }, (eventType, filename) => {
+        if (filename) {
+            console.log(`Template change detected: ${filename}`);
+            // Reload templates when changes are detected
+            loadTemplates();
+        }
+    });
+}
 
 // Register Handlebars helpers
 handlebars.registerHelper('sum', function(array, prop) {
@@ -140,6 +142,43 @@ handlebars.registerHelper('toFileUrl', function(filePath) {
     // Replace backslashes with forward slashes for file URLs
     if (typeof filePath !== 'string') return filePath;
     return filePath.replace(/\\/g, '/').replace(/\\/g, '/');
+});
+
+handlebars.registerHelper('formatDate', function(date, format) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    // A more robust solution might use a library like Moment.js or date-fns
+    // but for simplicity, we'll use Intl.DateTimeFormat.
+    // This basic implementation doesn't fully support arbitrary format strings
+    // like 'YYYY-MM-DD', but rather relies on Intl.DateTimeFormat options.
+    // For 'YYYY-MM-DD', you might need to construct it manually.
+
+    const d = new Date(date);
+
+    // Check if the date is valid
+    if (isNaN(d.getTime())) {
+        return 'Invalid Date'; // Or return original input, or throw error
+    }
+
+    if (format === 'YYYY-MM-DD') {
+        const year = d.getFullYear(); // Use d directly
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const day = ('0' + d.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
+    // Default or other formats handled by Intl.DateTimeFormat
+    try {
+        // Use d directly, and ensure options is always defined
+        return new Intl.DateTimeFormat('en-US', format ? JSON.parse(format) : options).format(d);
+    } catch (e) {
+        // Fallback for invalid format string (e.g., bad JSON)
+        // Still format the valid date 'd' using default options
+        return new Intl.DateTimeFormat('en-US', options).format(d);
+    }
+});
+
+handlebars.registerHelper('getCurrentYear', function() {
+    return new Date().getFullYear();
 });
 
 // Template registry methods
