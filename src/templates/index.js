@@ -41,21 +41,30 @@ function loadAndCompileTemplate(templatePath) {
  */
 function loadTemplates() {
     const templatesDir = path.join(__dirname);
+    console.log('Loading templates from directory:', templatesDir);
     
     // Read all directories in the templates folder
     const templateDirs = fs.readdirSync(templatesDir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
+    
+    console.log('Found template directories:', templateDirs);
 
     templateDirs.forEach(dirName => {
         const dirPath = path.join(templatesDir, dirName);
         const templatePath = path.join(dirPath, 'template.hbs');
         const metadataPath = path.join(dirPath, 'metadata.json');
 
+        console.log(`Processing template directory: ${dirName}`);
+        console.log(`Template path: ${templatePath}`);
+        console.log(`Metadata path: ${metadataPath}`);
+
         // Check if both template and metadata files exist
         if (fs.existsSync(templatePath) && fs.existsSync(metadataPath)) {
+            console.log(`Found template and metadata files for ${dirName}`);
             const metadata = loadTemplateMetadata(metadataPath);
             if (metadata) {
+                console.log(`Successfully loaded metadata for ${dirName}`);
                 // Store template information
                 templates[dirName] = {
                     name: metadata.name,
@@ -69,9 +78,16 @@ function loadTemplates() {
                 // Compile and store template
                 const compiledTemplate = loadAndCompileTemplate(templatePath);
                 if (compiledTemplate) {
+                    console.log(`Successfully compiled template for ${dirName}`);
                     compiledTemplates[dirName] = compiledTemplate;
+                } else {
+                    console.error(`Failed to compile template for ${dirName}`);
                 }
+            } else {
+                console.error(`Failed to load metadata for ${dirName}`);
             }
+        } else {
+            console.log(`Missing template or metadata files for ${dirName}`);
         }
     });
 }

@@ -111,11 +111,18 @@ app.get('/templates', (req, res) => {
 app.post('/generate-pdf/:templateKey', async (req, res) => {
     try {
         const { templateKey } = req.params;
+        console.log('Generating PDF for template:', templateKey);
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+        
         // Get saveToAirtable from query string and convert to boolean
         const saveToAirtable = req.query.saveToAirtable === 'true' || req.query.saveToAirtable === true;
         const { record_id, ...data } = req.body;
 
         const template = templateRegistry.getTemplate(templateKey);
+        console.log('Template found:', !!template);
+        if (template) {
+            console.log('Template metadata:', JSON.stringify(template, null, 2));
+        }
 
         if (!template) {
             return res.status(404).json({
@@ -126,6 +133,8 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
         // Flexible validation: warn if missing fields, but always return PDF
         const metadata = template;
         const missingFields = validateTemplateData(data, metadata.dataStructure);
+        console.log('Missing fields:', missingFields);
+        
         if (missingFields.length > 0) {
             console.warn(`Warning: Missing required fields for template '${templateKey}':`, missingFields);
             res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);

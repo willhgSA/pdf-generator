@@ -1,0 +1,76 @@
+{
+    "name": "Media Plan by Sections",
+    "description": "Template for media plan analysis, summary, and detailed reporting",
+    "version": "1.1.0",
+    "author": "Singular Design",
+    "logo_url": "https://yourdomain.com/logos/",
+    "logo_filename": "grassroots-logo.jpg",
+    "dataStructure": {
+      "required": [
+        "plan_summary",
+        "status",
+        "improved",
+        "reason",
+        "plan_payload"
+      ],
+      "optional": [
+        "generatedDate"
+      ],
+      "plan_summary": {
+        "required": [
+          "campaign_name",
+          "client_name",
+          "strategic_alignment",
+          "media_type_summary",
+          "budget_summary",
+          "geo_focus_summary",
+          "goal_alignment",
+          "owner_communication_tip"
+        ],
+        "media_type_summary": {
+          "type": "array",
+          "items": {
+            "required": [
+              "media_type",
+              "total_spend",
+              "percent",
+              "outlets"
+            ]
+          }
+        },
+        "budget_summary": {
+          "required": [
+            "total_campaign_budget",
+            "total_budget_spent",
+            "remaining_budget"
+          ]
+        }
+      },
+      "plan_payload": {
+        "required": [
+          "active_campaign_record_id",
+          "media_plan",
+          "budget_total",
+          "budget_spent",
+          "budget_remaining",
+          "general_justification"
+        ],
+        "media_plan": {
+          "required": [
+            "media_type",
+            "outlets"
+          ],
+          "outlets": {
+            "required": [
+              "media_outlet_name",
+              "estimated_reach",
+              "budget_allocated",
+              "frequency",
+              "justification",
+              "insertion_order_instructions"
+            ]
+          }
+        }
+      }
+    }
+  }
