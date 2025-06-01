@@ -7,12 +7,14 @@ const swaggerSpec = require('./config/swagger');
 const templateRegistry = require('./templates');
 const { uploadPDFToAirtable } = require('./config/airtable');
 const { validateTemplateData } = require('./templates');
+const handlebars = require('handlebars');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
 // Middleware to parse JSON bodies
-app.use(express.json());
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 // Serve Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -56,7 +58,7 @@ app.get('/templates', (req, res) => {
  * /generate-pdf/{templateKey}:
  *   post:
  *     summary: Generate a PDF using a specific template
- *     description: Generates a PDF document using the specified template and provided data. If saveToAirtable is true, you must provide a record_id in the request body to attach the PDF to an existing Airtable record.
+ *     description: Generates a PDF document using either an inline template provided in the request body or a template from the templates directory. If saveToAirtable is true, you must provide a record_id in the request body to attach the PDF to an existing Airtable record.
  *     tags: [PDF Generation]
  *     parameters:
  *       - in: path
@@ -64,7 +66,7 @@ app.get('/templates', (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: Key of the template to use
+ *         description: Key of the template to use (only used when not providing an inline template)
  *       - in: query
  *         name: saveToAirtable
  *         required: false
@@ -81,6 +83,12 @@ app.get('/templates', (req, res) => {
  *               record_id:
  *                 type: string
  *                 description: Airtable record ID to attach the PDF to an existing Airtable record (required if saveToAirtable is true)
+ *               handlebars_template:
+ *                 type: string
+ *                 description: Optional: Inline Handlebars template. If provided, this template will be used instead of the folder-based template.
+ *               json:
+ *                 type: object
+ *                 description: Optional: Data for the template when using an inline template. If not provided, the rest of the body will be used as template data.
  *             allOf:
  *               - oneOf:
  *                   - $ref: '#/components/schemas/MediaPlanRequest'
@@ -104,7 +112,7 @@ app.get('/templates', (req, res) => {
  *       400:
  *         description: Invalid request body or template key
  *       404:
- *         description: Template not found
+ *         description: Template not found (only when using folder-based templates)
  *       500:
  *         description: Server error
  */
@@ -112,43 +120,98 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
     try {
         const { templateKey } = req.params;
         console.log('Generating PDF for template:', templateKey);
-        console.log('Request body:', JSON.stringify(req.body, null, 2));
         
         // Get saveToAirtable from query string and convert to boolean
         const saveToAirtable = req.query.saveToAirtable === 'true' || req.query.saveToAirtable === true;
-        const { record_id, ...data } = req.body;
+        const { record_id, handlebars_template, json, ...data } = req.body;
 
-        const template = templateRegistry.getTemplate(templateKey);
-        console.log('Template found:', !!template);
-        if (template) {
-            console.log('Template metadata:', JSON.stringify(template, null, 2));
+        let template;
+        let templateData;
+
+        // Check if we have an inline template
+        if (handlebars_template) {
+            console.log('Using inline template');
+            try {
+                // Always parse handlebars_template as a string
+                let cleanedTemplate = '';
+                if (typeof handlebars_template === 'string') {
+                    cleanedTemplate = handlebars_template;
+                } else if (typeof handlebars_template === 'object' && handlebars_template !== null) {
+                    // If for some reason it comes as an object (rare), try to stringify it
+                    try {
+                        cleanedTemplate = JSON.stringify(handlebars_template);
+                    } catch (err) {
+                        console.error('Error stringifying handlebars_template:', err);
+                        return res.status(400).json({
+                            error: 'Failed to stringify handlebars_template',
+                            details: err.message
+                        });
+                    }
+                } else {
+                    // Fallback for other types (Buffer, etc)
+                    cleanedTemplate = String(handlebars_template);
+                }
+                // Remove extra quotes if present
+                if (cleanedTemplate.startsWith('"') && cleanedTemplate.endsWith('"')) {
+                    cleanedTemplate = cleanedTemplate.slice(1, -1);
+                }
+                // Replace escaped newlines with real newlines
+                cleanedTemplate = cleanedTemplate.replace(/\\n/g, '\n');
+                // Replace escaped quotes
+                cleanedTemplate = cleanedTemplate.replace(/\\"/g, '"');
+                // Replace double escaped quotes
+                cleanedTemplate = cleanedTemplate.replace(/\\\\"/g, '\\"');
+                // Compile the cleaned template
+                const compiledTemplate = handlebars.compile(cleanedTemplate);
+                template = {
+                    name: 'Inline Template',
+                    description: 'Template provided in request body',
+                    version: '1.0.0',
+                    author: 'User',
+                    dataStructure: {}, // No validation for inline templates
+                    path: null
+                };
+                // Store the compiled template temporarily
+                compiledTemplates[templateKey] = compiledTemplate;
+                // Use the provided JSON data or fallback to the rest of the body
+                templateData = json || data;
+            } catch (error) {
+                console.error('Error compiling inline template:', error);
+                return res.status(400).json({
+                    error: 'Invalid Handlebars template',
+                    details: error.message
+                });
+            }
+        } else {
+            console.log('Using folder-based template');
+            // Use the existing template system
+            template = templateRegistry.getTemplate(templateKey);
+            if (!template) {
+                return res.status(404).json({
+                    error: `Template ${templateKey} not found`
+                });
+            }
+
+            // Flexible validation: warn if missing fields, but always return PDF
+            const metadata = template;
+            const missingFields = validateTemplateData(data, metadata.dataStructure);
+            console.log('Missing fields:', missingFields);
+            
+            if (missingFields.length > 0) {
+                console.warn(`Warning: Missing required fields for template '${templateKey}':`, missingFields);
+                res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);
+            }
+
+            // Prepare data for the template
+            const templateDir = path.dirname(template.path);
+            templateData = {
+                ...data,
+                generatedDate: new Date().toLocaleDateString(),
+                pageNumber: 1,
+                totalPages: 1,
+                templateDir
+            };
         }
-
-        if (!template) {
-            return res.status(404).json({
-                error: `Template ${templateKey} not found`
-            });
-        }
-
-        // Flexible validation: warn if missing fields, but always return PDF
-        const metadata = template;
-        const missingFields = validateTemplateData(data, metadata.dataStructure);
-        console.log('Missing fields:', missingFields);
-        
-        if (missingFields.length > 0) {
-            console.warn(`Warning: Missing required fields for template '${templateKey}':`, missingFields);
-            res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);
-        }
-
-        // Prepare data for the template
-        const templateDir = path.dirname(template.path);
-        const templateData = {
-            ...data,
-            generatedDate: new Date().toLocaleDateString(),
-            pageNumber: 1,
-            totalPages: 1,
-            templateDir
-        };
 
         // Render the template with data
         const pdf = await (async () => {
@@ -179,8 +242,10 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
             return Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
         })();
 
-        // Log to verify the PDF is a Buffer
-        console.log('PDF is buffer:', Buffer.isBuffer(pdf), 'Type:', typeof pdf, 'Length:', pdf.length);
+        // Clean up temporary template if it was inline
+        if (handlebars_template) {
+            delete compiledTemplates[templateKey];
+        }
 
         // Check if the PDF is larger than 5 MB before uploading to Airtable
         if (saveToAirtable && pdf.length > 5 * 1024 * 1024) {
@@ -265,32 +330,84 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
 app.post('/preview/:templateKey', (req, res) => {
     try {
         const { templateKey } = req.params;
-        const template = templateRegistry.getTemplate(templateKey);
+        const { handlebars_template, json, ...data } = req.body;
+        let template;
+        let templateData;
 
-        if (!template) {
+        // Check if we have an inline template
+        if (handlebars_template) {
+            try {
+                // Always parse handlebars_template as a string
+                let cleanedTemplate = '';
+                if (typeof handlebars_template === 'string') {
+                    cleanedTemplate = handlebars_template;
+                } else if (typeof handlebars_template === 'object' && handlebars_template !== null) {
+                    try {
+                        cleanedTemplate = JSON.stringify(handlebars_template);
+                    } catch (err) {
+                        console.error('Error stringifying handlebars_template:', err);
+                        return res.status(400).json({
+                            error: 'Failed to stringify handlebars_template',
+                            details: err.message
+                        });
+                    }
+                } else {
+                    cleanedTemplate = String(handlebars_template);
+                }
+                if (cleanedTemplate.startsWith('"') && cleanedTemplate.endsWith('"')) {
+                    cleanedTemplate = cleanedTemplate.slice(1, -1);
+                }
+                cleanedTemplate = cleanedTemplate.replace(/\\n/g, '\n');
+                cleanedTemplate = cleanedTemplate.replace(/\\"/g, '"');
+                cleanedTemplate = cleanedTemplate.replace(/\\\\"/g, '\\"');
+                const compiledTemplate = handlebars.compile(cleanedTemplate);
+                template = {
+                    name: 'Inline Template',
+                    description: 'Template provided in request body',
+                    version: '1.0.0',
+                    author: 'User',
+                    dataStructure: {},
+                    path: null
+                };
+                templateData = json || data;
+                // Render the inline template
+                const html = compiledTemplate(templateData);
+                res.send(html);
+                return;
+            } catch (error) {
+                console.error('Error compiling inline template:', error);
+                return res.status(400).json({
+                    error: 'Invalid Handlebars template',
+                    details: error.message
+                });
+            }
+        }
+
+        // Fallback to folder-based template
+        const templateObj = templateRegistry.getTemplate(templateKey);
+        if (!templateObj) {
             return res.status(404).json({
                 error: `Template ${templateKey} not found`
             });
         }
 
         // Flexible validation: warn if missing fields, but always return HTML
-        const metadata = template;
+        const metadata = templateObj;
         const missingFields = validateTemplateData(req.body, metadata.dataStructure);
         if (missingFields.length > 0) {
             console.warn(`Warning: Missing required fields for template '${templateKey}':`, missingFields);
             res.setHeader('X-Template-Warning', `Missing fields: ${missingFields.join(', ')}`);
         }
 
-        const templateDir = path.dirname(template.path);
-        const data = {
+        const templateDir = path.dirname(templateObj.path);
+        const templateDataFolder = {
             ...req.body,
             generatedDate: new Date().toLocaleDateString(),
             pageNumber: 1,
             totalPages: 1,
             templateDir
         };
-        
-        const html = templateRegistry.renderTemplate(templateKey, data);
+        const html = templateRegistry.renderTemplate(templateKey, templateDataFolder);
         res.send(html);
     } catch (error) {
         console.error('Error generating preview:', error);

@@ -24,6 +24,14 @@ const options = {
           type: 'object',
           required: ['status', 'plan_payload'],
           properties: {
+            record_id: {
+              type: 'string',
+              description: 'Airtable record ID to attach the PDF to an existing Airtable record (required if saveToAirtable is true)'
+            },
+            handlebars_template: {
+              type: 'string',
+              description: 'Optional: Inline Handlebars template. If provided, this template will be used instead of the folder-based template.'
+            },
             status: {
               type: 'string',
               enum: ['needs_improvement', 'approved', 'rejected'],
