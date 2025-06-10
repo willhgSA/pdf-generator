@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRASSROOTS MEDIA - Radio/Audio Insertion Order</title>
+    <style>
+        @page { 
+            size: 8.5in 11in; 
+            margin: 0.75in; 
+            orphans: 3;
+            widows: 3;
+        }
+        
+        body { 
+            font-family: 'Arial', 'Helvetica', sans-serif; 
+            line-height: 1.3; 
+            color: #000000; 
+            background: #ffffff; 
+            margin: 0; 
+            padding: 0; 
+            font-size: 11pt;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .document-container { 
+            background: #ffffff; 
+            width: 100%;
+            max-width: 7in;
+            margin: 0 auto; 
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .header-date {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9pt;
+            color: #333333;
+            margin-bottom: 15pt;
+            page-break-inside: avoid;
+        }
+        
+        .document-title {
+            text-align: center;
+            margin-bottom: 20pt;
+            padding-bottom: 10pt;
+            border-bottom: 2pt solid #C3875B;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+        
+        .document-title h1 {
+            color: #000000;
+            font-size: 16pt;
+            margin: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5pt;
+        }
+        
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20pt;
+            padding: 10pt;
+            background: #f8f9fa;
+            border-radius: 3pt;
+            border-left: 3pt solid #C3875B;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .order-number, .order-date {
+            font-weight: 600;
+            font-size: 11pt;
+        }
+        
+        /* Parallel contact sections optimized for print */
+        .contact-sections {
+            display: table;
+            width: 100%;
+            margin-bottom: 20pt;
+            page-break-inside: avoid;
+        }
+        
+        .contact-sections .section {
+            display: table-cell;
+            width: 48%;
+            vertical-align: top;
+            padding-right: 4%;
+        }
+        
+        .contact-sections .section:last-child {
+            padding-right: 0;
+        }
+        
+        .section {
+            margin-bottom: 15pt;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            background-color: #f0f0f0;
+            padding: 8pt 12pt;
+            margin: 0 0 10pt 0;
+            font-size: 11pt;
+            font-weight: 700;
+            color: #000000;
+            border-left: 3pt solid #C3875B;
+            page-break-after: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .section-content {
+            padding: 0 12pt;
+        }
+        
+        .contact-info p {
+            margin: 3pt 0;
+            font-size: 10pt;
+            line-height: 1.2;
+        }
+        
+        .contact-info a {
+            color: #000000;
+            text-decoration: none;
+        }
+        
+        /* Improved placement details for print */
+        .placement-details-container {
+            background: #f8f9fa;
+            padding: 12pt;
+            border-radius: 3pt;
+            margin-bottom: 15pt;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .details-grid {
+            display: table;
+            width: 100%;
+            margin-top: 10pt;
+        }
+        
+        .details-row {
+            display: table-row;
+        }
+        
+        .detail-item {
+            display: table-cell;
+            padding: 3pt 12pt 3pt 0;
+            width: 48%;
+            vertical-align: top;
+        }
+        
+        .details-label {
+            font-weight: 600;
+            color: #C3875B;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.3pt;
+            display: block;
+            margin-bottom: 2pt;
+        }
+        
+        .details-value {
+            font-size: 10pt;
+            color: #000000;
+            line-height: 1.2;
+        }
+        
+        .insertion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10pt 0;
+            background: #ffffff;
+            border: 1pt solid #cccccc;
+            page-break-inside: avoid;
+            font-size: 9pt;
+        }
+        
+        .insertion-table th {
+            background: #C3875B;
+            color: white;
+            padding: 6pt 4pt;
+            text-align: center;
+            font-size: 8pt;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3pt;
+            border: 1pt solid #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .insertion-table td {
+            padding: 6pt 4pt;
+            text-align: center;
+            border: 0.5pt solid #dddddd;
+            font-size: 9pt;
+            line-height: 1.1;
+        }
+        
+        .insertion-table tr:nth-child(even) {
+            background: #f9f9f9;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .total-cost {
+            text-align: right;
+            font-weight: 700;
+            font-size: 12pt;
+            margin: 10pt 0;
+            color: #000000;
+            padding: 10pt;
+            background: #f8f9fa;
+            border-radius: 3pt;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .total-cost span {
+            color: #C3875B;
+        }
+        
+        /* Parallel information sections for print */
+        .info-sections {
+            display: table;
+            width: 100%;
+            margin-bottom: 15pt;
+        }
+        
+        .info-section {
+            display: table-cell;
+            width: 48%;
+            padding-right: 4%;
+            vertical-align: top;
+            background: #ffffff;
+            border: 1pt solid #dddddd;
+            border-radius: 3pt;
+            page-break-inside: avoid;
+        }
+        
+        .info-section:last-child {
+            padding-right: 0;
+        }
+        
+        .info-section .section-title {
+            margin: 0;
+            border-radius: 0;
+            border-left: none;
+            background: #C3875B;
+            color: white;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .info-section .section-content {
+            padding: 10pt;
+        }
+        
+        .terms-list {
+            padding-left: 15pt;
+            margin: 8pt 0;
+        }
+        
+        .terms-list li {
+            margin-bottom: 6pt;
+            font-size: 10pt;
+            line-height: 1.2;
+        }
+        
+        .signature-section {
+            margin-top: 20pt;
+            background: #f8f9fa;
+            padding: 12pt;
+            border-radius: 3pt;
+            page-break-inside: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .signature-grid {
+            display: table;
+            width: 100%;
+            margin: 15pt 0;
+        }
+        
+        .signature-line {
+            display: table-cell;
+            width: 48%;
+            padding-right: 4%;
+            margin: 15pt 0;
+        }
+        
+        .signature-line:last-child {
+            padding-right: 0;
+        }
+        
+        .signature-line strong {
+            display: block;
+            border-top: none;
+            padding-top: 5pt;
+            width: 100%;
+            font-size: 10pt;
+        }
+        
+        .signature-line em {
+            font-size: 9pt;
+            color: #333333;
+        }
+        
+        .signature-line small {
+            font-size: 8pt;
+            color: #666666;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 25pt;
+            padding-top: 10pt;
+            border-top: 1pt solid #cccccc;
+            font-size: 9pt;
+            color: #333333;
+            page-break-inside: avoid;
+        }
+        
+        .footer a {
+            color: #000000;
+            text-decoration: none;
+        }
+        
+        /* Print-specific optimizations */
+        @media print {
+            body {
+                font-size: 10pt;
+                line-height: 1.2;
+            }
+            
+            .document-container {
+                padding: 0;
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .contact-sections,
+            .details-grid,
+            .info-sections,
+            .signature-grid {
+                page-break-inside: avoid;
+            }
+            
+            .insertion-table {
+                page-break-inside: avoid;
+                font-size: 8pt;
+            }
+            
+            .insertion-table th {
+                font-size: 7pt;
+            }
+            
+            .insertion-table td {
+                font-size: 8pt;
+                padding: 4pt 3pt;
+            }
+            
+            .signature-section {
+                page-break-inside: avoid;
+                margin-top: 15pt;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+            
+            .section-title {
+                page-break-after: avoid;
+            }
+            
+            /* Force colors in print */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+        
+        /* Responsive fallback for screens */
+        @media screen and (max-width: 768px) {
+            .contact-sections .section,
+            .info-section,
+            .signature-line,
+            .detail-item {
+                display: block;
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 10pt;
+            }
+            
+            .contact-sections,
+            .details-grid,
+            .info-sections,
+            .signature-grid {
+                display: block;
+            }
+            
+            .order-details {
+                flex-direction: column;
+                gap: 5pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="document-container">
+        <div class="header-date">
+            <div>{{formatDate (now) 'MM/DD/YYYY, h:mm A'}}</div>
+            <div>Radio/Audio Insertion Order</div>
+        </div>
+        
+        <div class="document-title">
+            <h1>GRASSROOTS MEDIA, LLC - RADIO/AUDIO INSERTION ORDER</h1>
+        </div>
+        
+        <div class="order-details">
+            <div class="order-number">
+                <strong>Order Number:</strong> {{order_number}}
+            </div>
+            <div class="order-date">
+                <strong>Date:</strong> {{original_order_date}}
+            </div>
+        </div>
+        
+        <!-- Parallel contact sections optimized for print -->
+        <div class="contact-sections">
+            <div class="section">
+                <div class="section-title">TO:</div>
+                <div class="section-content contact-info">
+                    <p><strong>{{'{{media_outlet_name}}'}}</strong></p>
+                    <p>{{media_outlet_address}}</p>
+                    <p>ATTN: {{full_name_from_media_outlet_contacts}}</p>
+                    <p>Phone: {{phone_from_media_outlet_contacts}}</p>
+                    <p>Email: {{email_from_media_outlet_contacts}}</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">FROM:</div>
+                <div class="section-content contact-info">
+                    <p><strong>Grassroots Media</strong></p>
+                    <p>135 W 29th Street, Suite 302</p>
+                    <p>New York, NY 10001</p>
+                    <p><a href="https://www.grassrootsmedia.nyc">www.grassrootsmedia.nyc</a></p>
+                    <p>Contact: {{account_executive_name}}</p>
+                    <p>Phone: {{account_executive_phone}}</p>
+                    <p>Email: {{account_executive_email}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Optimized placement details for print -->
+        <div class="placement-details-container">
+            <div class="section-title">PLACEMENT DETAILS</div>
+            <div class="details-grid">
+                <div class="details-row">
+                    <div class="detail-item">
+                        <div class="details-label">Client:</div>
+                        <div class="details-value">{{company_name_from_active_campaign}}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="details-label">Campaign:</div>
+                        <div class="details-value">{{campaign_title_from_active_campaign}}</div>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="detail-item">
+                        <div class="details-label">Product/Service:</div>
+                        <div class="details-value">{{product_or_service}}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="details-label">Flight Dates:</div>
+                        <div class="details-value">{{formatDate start_date_from_active_campaign 'MM/DD/YYYY'}} – {{formatDate end_date_from_active_campaign 'MM/DD/YYYY'}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+        <div class="section-title">INSERTION SCHEDULE</div>
+        <div class="section-content">
+            <table class="insertion-table">
+            <thead>
+                <tr>
+                <th>Instructions</th>
+                <th>Daypart</th>
+                <th>Days</th>
+                <th>Time of Day</th>
+                <th>Spot Length</th>
+                <th>Spots/Week</th>
+                <th>Rate per Spot</th>
+                <th>Total Spots</th>
+                <th>Total Cost</th>
+                <th>Script Provided</th>
+                <th>Live Read</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each radio_media_placement_json_summary_rollup}}
+                <tr>
+                <td>{{special_instructions}}</td>
+                <td>{{daypart}}</td>
+                <td>{{days}}</td>
+                <td>{{time_of_day}}</td>
+                <td>{{spot_length}}</td>
+                <td>{{spots_per_week}}</td>
+                <td>${{currency rate_per_spot}}</td>
+                <td>{{total_spots}}</td>
+                <td>${{currency total_cost}}</td>
+                <td>{{#if script_provided}}Yes{{else}}No{{/if}}</td>
+                <td>{{#if live_read}}Yes{{else}}No{{/if}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+            </table>
+
+            <div class="total-cost">
+            <strong>TOTAL COST: <span>{{currency total_cost}}</span></strong>
+            </div>
+        </div>
+        </div>
+
+        <!-- Parallel information sections optimized for print -->
+        <div class="info-sections">
+            <div class="info-section">
+                <div class="section-title">TEARSHEET REQUIREMENTS</div>
+                <div class="section-content">
+                    <p>
+                        Media outlet must provide one complimentary copy of the publication and an electronic tearsheet emailed to 
+                        <a href="mailto:{{account_executive_email}}">{{account_executive_email}}</a> within 7 days of publication.
+                        Grassroots Media cannot bill advertisers/clients until all tear sheets have been received.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="section-title">AD COPY</div>
+                <div class="section-content">
+                    <p>
+                        Ad copy questions? Please contact <a href="mailto:{{account_executive_email}}">{{account_executive_email}}</a> 
+                        or call {{production_contact_phone}}.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">TERMS & CONDITIONS</div>
+            <div class="section-content">
+                <ul class="terms-list">
+                    <li>Acknowledges Grassroots Media as its advertising agent and agrees to accept the net rate listed above.</li>
+                    <li>Will not invoice the client or agency directly. Grassroots Media will make payment within 30 to 60 days of receiving the tear sheets and invoice.</li>
+                    <li>Media outlet will hold all materials for possible future use.</li>
+                    <li>Any changes to this insertion order must be approved in writing by Grassroots Media.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="signature-section">
+            <div class="section-title">APPROVAL</div>
+            <div class="section-content">
+                <p>Please check size, rate, and run date. Any changes must be approved by Grassroots Media prior to placement.</p>
+                
+                <!-- Parallel signature lines optimized for print -->
+                <div class="signature-grid">
+                    <div class="signature-line">
+                        <strong>X_____________________________________</strong><br />
+                        <em>Media Outlet Authorized Signature</em><br />
+                        <small>Date: _____________</small>
+                    </div>
+                    
+                    <div class="signature-line">
+                        <strong>X_____________________________________</strong><br />
+                        <em>Grassroots Media Authorized Signature</em><br />
+                        <small>Date: _____________</small>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; margin-top: 15pt;">
+                    Please return signed copy to <a href="mailto:{{account_executive_email}}">{{account_executive_email}}</a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Grassroots Media, LLC • Radio/Audio Insertion Order • Confidential Document</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -21,13 +21,22 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @swagger
+ * tags:
+ *   - name: Templates
+ *     description: Template management
+ *   - name: PDF Generation
+ *     description: PDF generation operations
+ *   - name: Preview
+ *     description: Template preview operations
+ * 
  * /templates:
  *   get:
  *     summary: Get all available templates
  *     description: Returns a list of all available PDF templates
- *     tags: [Templates]
+ *     tags: 
+ *       - Templates
  *     responses:
- *       200:
+ *       "200":
  *         description: List of available templates
  *         content:
  *           application/json:
@@ -58,15 +67,19 @@ app.get('/templates', (req, res) => {
  * /generate-pdf/{templateKey}:
  *   post:
  *     summary: Generate a PDF using a specific template
- *     description: Generates a PDF document using either an inline template provided in the request body or a template from the templates directory. If saveToAirtable is true, you must provide a record_id in the request body to attach the PDF to an existing Airtable record.
- *     tags: [PDF Generation]
+ *     description: >
+ *       Generates a PDF document using either an inline template provided in the request body
+ *       or a template from the templates directory. If saveToAirtable is true, you must
+ *       provide a record_id in the request body to attach the PDF to an existing Airtable record.
+ *     tags: 
+ *       - PDF Generation
  *     parameters:
  *       - in: path
  *         name: templateKey
  *         required: true
  *         schema:
  *           type: string
- *         description: Key of the template to use (only used when not providing an inline template)
+ *         description: Key of the template to use
  *       - in: query
  *         name: saveToAirtable
  *         required: false
@@ -78,25 +91,26 @@ app.get('/templates', (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               record_id:
- *                 type: string
- *                 description: Airtable record ID to attach the PDF to an existing Airtable record (required if saveToAirtable is true)
- *               handlebars_template:
- *                 type: string
- *                 description: Optional: Inline Handlebars template. If provided, this template will be used instead of the folder-based template.
- *               json:
- *                 type: object
- *                 description: Optional: Data for the template when using an inline template. If not provided, the rest of the body will be used as template data.
  *             allOf:
+ *               - type: object
+ *                 properties:
+ *                   record_id:
+ *                     type: string
+ *                     description: Airtable record ID for PDF attachment
+ *                   handlebars_template:
+ *                     type: string
+ *                     description: Optional inline Handlebars template
+ *                   json:
+ *                     type: object
+ *                     description: Optional template data
  *               - oneOf:
- *                   - $ref: '#/components/schemas/MediaPlanRequest'
- *                   - $ref: '#/components/schemas/CampaignSummaryRequest'
- *                   - $ref: '#/components/schemas/BudgetReportRequest'
- *                   - $ref: '#/components/schemas/PerformanceMetricsRequest'
+ *                   - $ref: "#/components/schemas/MediaPlanRequest"
+ *                   - $ref: "#/components/schemas/CampaignSummaryRequest"
+ *                   - $ref: "#/components/schemas/BudgetReportRequest"
+ *                   - $ref: "#/components/schemas/PerformanceMetricsRequest"
+ *                   - $ref: "#/components/schemas/PrintInsertionOrderRequest"
  *     responses:
- *       200:
+ *       "200":
  *         description: PDF file generated successfully
  *         content:
  *           application/json:
@@ -109,11 +123,11 @@ app.get('/templates', (req, res) => {
  *                 airtableRecord:
  *                   type: object
  *                   description: Airtable record if saved
- *       400:
+ *       "400":
  *         description: Invalid request body or template key
- *       404:
- *         description: Template not found (only when using folder-based templates)
- *       500:
+ *       "404":
+ *         description: Template not found
+ *       "500":
  *         description: Server error
  */
 app.post('/generate-pdf/:templateKey', async (req, res) => {
@@ -296,8 +310,9 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
  * /preview/{templateKey}:
  *   post:
  *     summary: Preview a template with data
- *     description: Renders the specified template with the provided data and returns the HTML
- *     tags: [Preview]
+ *     description: Renders the specified template with the provided data and returns HTML
+ *     tags: 
+ *       - Preview
  *     parameters:
  *       - in: path
  *         name: templateKey
@@ -311,20 +326,20 @@ app.post('/generate-pdf/:templateKey', async (req, res) => {
  *         application/json:
  *           schema:
  *             oneOf:
- *               - $ref: '#/components/schemas/MediaPlanRequest'
- *               - $ref: '#/components/schemas/CampaignSummaryRequest'
- *               - $ref: '#/components/schemas/BudgetReportRequest'
- *               - $ref: '#/components/schemas/PerformanceMetricsRequest'
+ *               - $ref: "#/components/schemas/MediaPlanRequest"
+ *               - $ref: "#/components/schemas/CampaignSummaryRequest"
+ *               - $ref: "#/components/schemas/BudgetReportRequest"
+ *               - $ref: "#/components/schemas/PerformanceMetricsRequest"
  *     responses:
- *       200:
+ *       "200":
  *         description: HTML preview generated successfully
  *         content:
  *           text/html:
  *             schema:
  *               type: string
- *       404:
+ *       "404":
  *         description: Template not found
- *       500:
+ *       "500":
  *         description: Server error
  */
 app.post('/preview/:templateKey', (req, res) => {

@@ -1,0 +1,53 @@
+{
+  "name": "Print Insertion Order",
+  "description": "Template for generating print media insertion orders",
+  "version": "1.0.0",
+  "author": "Singular Design",
+  "logo_url": "https://yourdomain.com/logos/",
+  "logo_filename": "grassroots-logo.jpg",
+  "dataStructure": {
+    "required": [
+      "order_number",
+      "original_order_date",
+      "media_outlet_name",
+      "media_outlet_address",
+      "full_name_from_media_outlet_contacts",
+      "phone_from_media_outlet_contacts",
+      "email_from_media_outlet_contacts",
+      "account_executive_name",
+      "account_executive_phone",
+      "account_executive_email",
+      "company_name_from_active_campaign",
+      "campaign_title_from_active_campaign",
+      "product_or_service",
+      "start_date_from_active_campaign",
+      "end_date_from_active_campaign",
+      "total_cost",
+      "publication_name",
+      "ad_type",
+      "position",
+      "color_specification",
+      "total_insertions",
+      "net_rate",
+      "production_contact_phone"
+    ],
+    "optional": [
+      "special_instructions"
+    ],
+    "print_placements": {
+      "type": "array",
+      "items": {
+        "required": [
+          "status",
+          "publication_date",
+          "ad_type",
+          "units",
+          "color_specification",
+          "position",
+          "net_rate",
+          "net_cost"
+        ]
+      }
+    }
+  }
+} 

@@ -1,0 +1,59 @@
+{
+  "name": "Digital Insertion Order",
+  "description": "Template for generating digital media insertion orders",
+  "version": "1.0.0",
+  "author": "Singular Design",
+  "logo_url": "https://yourdomain.com/logos/",
+  "logo_filename": "grassroots-logo.jpg",
+  "dataStructure": {
+    "required": [
+      "order_number",
+      "original_order_date",
+      "media_outlet_name",
+      "email_from_media_outlet_contacts",
+      "phone_from_media_outlet_contacts",
+      "full_name_from_media_outlet_contacts",
+      "media_outlets_id",
+      "company_name_from_active_campaign",
+      "campaign_title_from_active_campaign",
+      "start_date_from_active_campaign",
+      "end_date_from_active_campaign",
+      "special_instructions",
+      "total_cost",
+      "total_assigned_to_digital_media_outlet",
+      "digital_media_placement_json_summary_rollup",
+      "account_executive_name",
+      "account_executive_email",
+      "account_executive_phone",
+      "production_contact_phone"
+    ],
+    "optional": [
+      "total_assigned_to_print_media_outlet",
+      "print_media_placement_json_summary_rollup",
+      "total_assigned_to_radio_media_outlet",
+      "radio_media_placement_json_summary_rollup",
+      "total_assigned_to_tv_media_outlet",
+      "tv_media_placement_json_summary_rollup"
+    ],
+    "digital_media_placement_json_summary_rollup": {
+      "type": "array",
+      "items": {
+        "required": [
+          "insertion_order_related",
+          "media_type",
+          "website_section",
+          "ad_type",
+          "ad_format",
+          "units",
+          "targeting",
+          "cost_method",
+          "rate",
+          "total_cost",
+          "created",
+          "special_instructions",
+          "media_outlet_name"
+        ]
+      }
+    }
+  }
+} 

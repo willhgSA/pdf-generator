@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRASSROOTS MEDIA - Print Insertion Order</title>
+    <style>
+        @page { 
+            size: letter; 
+            margin: 1.5cm; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.4; 
+            color: #2c2c2c; 
+            background: #ffffff; 
+            margin: 0; 
+            padding: 0; 
+            font-size: 12px;
+        }
+        
+        .document-container { 
+            background: #ffffff; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 30px;
+        }
+        
+        .header-date {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .document-title {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #C3875B;
+        }
+        
+        .document-title h1 {
+            color: #2c2c2c;
+            font-size: 20px;
+            margin: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #C3875B;
+        }
+        
+        .order-number, .order-date {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        /* NEW: Parallel contact sections */
+        .contact-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c2c2c;
+            border-left: 4px solid #C3875B;
+        }
+        
+        .section-content {
+            padding: 0 15px;
+        }
+        
+        .contact-info p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        .contact-info a {
+            color: #C3875B;
+            text-decoration: none;
+        }
+        
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        
+        /* NEW: Improved placement details grid */
+        .placement-details-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px 30px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .details-label {
+            font-weight: 600;
+            color: #C3875B;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .details-value {
+            font-size: 13px;
+            color: #2c2c2c;
+        }
+        
+        .insertion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .insertion-table th {
+            background: #C3875B;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .insertion-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 11px;
+        }
+        
+        .insertion-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .insertion-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .total-cost {
+            text-align: right;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 15px 0;
+            color: #2c2c2c;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .total-cost span {
+            color: #C3875B;
+        }
+        
+        /* NEW: Improved information sections layout */
+        .info-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .info-section {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .info-section .section-title {
+            margin: 0;
+            border-radius: 0;
+            border-left: none;
+            background: #C3875B;
+            color: white;
+        }
+        
+        .info-section .section-content {
+            padding: 15px;
+        }
+        
+        .terms-list {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        
+        .terms-list li {
+            margin-bottom: 8px;
+        }
+        
+        .signature-section {
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .signature-line {
+            margin: 20px 0;
+        }
+        
+        .signature-line strong {
+            display: block;
+            border-top: 2px solid #2c2c2c;
+            padding-top: 8px;
+            width: 100%;
+        }
+        
+        .signature-line em {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .footer a {
+            color: #C3875B;
+            text-decoration: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .document-container {
+                padding: 15px;
+            }
+            
+            .contact-sections,
+            .details-grid,
+            .info-sections,
+            .signature-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .order-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            
+            .document-container {
+                padding: 0;
+                max-width: 100%;
+            }
+            
+            .insertion-table {
+                page-break-inside: avoid;
+            }
+            
+            .signature-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="document-container">
+        <div class="header-date">
+            <div>{{formatDate (now) 'MM/DD/YYYY, h:mm A'}}</div>
+            <div>Print Insertion Order</div>
+        </div>
+        
+        <div class="document-title">
+            <h1>GRASSROOTS MEDIA, LLC - PRINT INSERTION ORDER</h1>
+        </div>
+        
+        <div class="order-details">
+            <div class="order-number">
+                <strong>Order Number:</strong> {{order_number}}
+            </div>
+            <div class="order-date">
+                <strong>Date:</strong> {{original_order_date}}
+            </div>
+        </div>
+        
+        <!-- NEW: Parallel contact sections -->
+        <div class="contact-sections">
+            <div class="section">
+                <div class="section-title">TO:</div>
+                <div class="section-content contact-info">
+                    <p><strong>{{media_outlet_name}}</strong></p>
+                    <p>{{media_outlet_address}}</p>
+                    <p>ATTN: {{full_name_from_media_outlet_contacts}}</p>
+                    <p>Phone: {{phone_from_media_outlet_contacts}}</p>
+                    <p>Email: {{email_from_media_outlet_contacts}}</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">FROM:</div>
+                <div class="section-content contact-info">
+                    <p><strong>Grassroots Media</strong></p>
+                    <p>135 W 29th Street, Suite 302</p>
+                    <p>New York, NY 10001</p>
+                    <p><a href="https://www.grassrootsmedia.nyc">www.grassrootsmedia.nyc</a></p>
+                    <p>Contact: {{account_executive_name}}</p>
+                    <p>Phone: {{account_executive_phone}}</p>
+                    <p>Email: {{account_executive_email}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NEW: Improved placement details -->
+        <div class="placement-details-container">
+            <div class="section-title">PLACEMENT DETAILS</div>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="details-label">Client:</div>
+                    <div class="details-value">{{company_name_from_active_campaign}}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="details-label">Campaign:</div>
+                    <div class="details-value">{{campaign_title_from_active_campaign}}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="details-label">Product/Service:</div>
+                    <div class="details-value">{{product_or_service}}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="details-label">Flight Dates:</div>
+                    <div class="details-value">{{formatDate start_date_from_active_campaign 'MM/DD/YYYY'}} – {{formatDate end_date_from_active_campaign 'MM/DD/YYYY'}}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">INSERTION SCHEDULE</div>
+            <div class="section-content">
+                <table class="insertion-table">
+                    <thead>
+                        <tr>
+                            <th>Instructions</th>
+                            <th>Insertion Date</th>
+                            <th>Ad Size</th>
+                            <th>Units</th>
+                            <th>Color</th>
+                            <th>Position</th>
+                            <th>Net Rate</th>
+                            <th>Net Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each print_media_placement_json_summary_rollup}}
+                        <tr>
+                            <td>{{special_instructions}}</td>
+                            <td>{{publication_date}}</td>
+                            <td>{{ad_type}}</td>
+                            <td>{{units}}</td>
+                            <td>{{color_specification}}</td>
+                            <td>{{position}}</td>
+                            <td>${{net_rate}}</td>
+                            <td>${{net_cost}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                
+                <div class="total-cost">
+                    <strong>TOTAL COST: <span>${{total_cost}}</span></strong>
+                </div>
+            </div>
+        </div>       
+       
+        <!-- NEW: Parallel information sections -->
+        <div class="info-sections">
+            <div class="info-section">
+                <div class="section-title">TEARSHEET REQUIREMENTS</div>
+                <div class="section-content">
+                    <p>
+                        Media outlet must provide one complimentary copy of the publication and an electronic tearsheet emailed to 
+                        <a href="mailto:tearsheets@grassrootsmedia.nyc">tearsheets@grassrootsmedia.nyc</a> within 7 days of publication.
+                        Grassroots Media cannot bill advertisers/clients until all tear sheets have been received.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="section-title">AD COPY</div>
+                <div class="section-content">
+                    <p>
+                        Ad copy questions? Please contact <a href="mailto:{{account_executive_email}}">{{account_executive_email}}</a> 
+                        or call {{production_contact_phone}}.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">TERMS & CONDITIONS</div>
+            <div class="section-content">
+                <ul class="terms-list">
+                    <li>Acknowledges Grassroots Media as its advertising agent and agrees to accept the net rate listed above.</li>
+                    <li>Will not invoice the client or agency directly. Grassroots Media will make payment within 30 to 60 days of receiving the tear sheets and invoice.</li>
+                    <li>Media outlet will hold all materials for possible future use.</li>
+                    <li>Any changes to this insertion order must be approved in writing by Grassroots Media.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="signature-section">
+            <div class="section-title">APPROVAL</div>
+            <div class="section-content">
+                <p>Please check size, rate, and run date. Any changes must be approved by Grassroots Media prior to placement.</p>
+                
+                <!-- NEW: Parallel signature lines -->
+                <div class="signature-grid">
+                    <div class="signature-line">
+                        <strong>X_____________________________________</strong><br />
+                        <em>Media Outlet Authorized Signature</em><br />
+                        <small>Date: _____________</small>
+                    </div>
+                    
+                    <div class="signature-line">
+                        <strong>X_____________________________________</strong><br />
+                        <em>Grassroots Media Authorized Signature</em><br />
+                        <small>Date: _____________</small>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; margin-top: 20px;">
+                    Please return signed copy to <a href="mailto:orders@grassrootsmedia.nyc">orders@grassrootsmedia.nyc</a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Grassroots Media, LLC • Print Insertion Order • Confidential Document</p>
+        </div>
+    </div>
+</body>
+</html>

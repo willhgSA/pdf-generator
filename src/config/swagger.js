@@ -322,6 +322,184 @@ const options = {
               }
             }
           }
+        },
+        PrintInsertionOrderRequest: {
+          type: 'object',
+          required: [
+            'order_number',
+            'original_order_date',
+            'media_outlet_name',
+            'media_outlet_address',
+            'contact_name',
+            'contact_phone',
+            'contact_email',
+            'account_executive_name',
+            'account_executive_phone',
+            'account_executive_email',
+            'company_name_from_active_campaign',
+            'campaign_title_from_active_campaign',
+            'product_or_service',
+            'start_date_from_active_campaign',
+            'end_date_from_active_campaign',
+            'print_placements',
+            'total_cost',
+            'publication_name',
+            'ad_type',
+            'position',
+            'color_specification',
+            'total_insertions',
+            'net_rate',
+            'production_contact_phone'
+          ],
+          properties: {
+            order_number: {
+              type: 'string',
+              description: 'Unique identifier for the insertion order'
+            },
+            original_order_date: {
+              type: 'string',
+              description: 'Date when the order was created'
+            },
+            media_outlet_name: {
+              type: 'string',
+              description: 'Name of the media outlet'
+            },
+            media_outlet_address: {
+              type: 'string',
+              description: 'Address of the media outlet'
+            },
+            contact_name: {
+              type: 'string',
+              description: 'Name of the contact person at the media outlet'
+            },
+            contact_phone: {
+              type: 'string',
+              description: 'Phone number of the contact person'
+            },
+            contact_email: {
+              type: 'string',
+              description: 'Email address of the contact person'
+            },
+            account_executive_name: {
+              type: 'string',
+              description: 'Name of the Grassroots Media account executive'
+            },
+            account_executive_phone: {
+              type: 'string',
+              description: 'Phone number of the account executive'
+            },
+            account_executive_email: {
+              type: 'string',
+              description: 'Email address of the account executive'
+            },
+            company_name_from_active_campaign: {
+              type: 'string',
+              description: 'Name of the client company'
+            },
+            campaign_title_from_active_campaign: {
+              type: 'string',
+              description: 'Title of the advertising campaign'
+            },
+            product_or_service: {
+              type: 'string',
+              description: 'Product or service being advertised'
+            },
+            start_date_from_active_campaign: {
+              type: 'string',
+              description: 'Start date of the campaign'
+            },
+            end_date_from_active_campaign: {
+              type: 'string',
+              description: 'End date of the campaign'
+            },
+            print_placements: {
+              type: 'array',
+              description: 'Array of print placement details',
+              items: {
+                type: 'object',
+                required: [
+                  'status',
+                  'publication_date',
+                  'ad_type',
+                  'units',
+                  'color_specification',
+                  'position',
+                  'net_rate',
+                  'net_cost'
+                ],
+                properties: {
+                  status: {
+                    type: 'string',
+                    description: 'Status of the placement'
+                  },
+                  publication_date: {
+                    type: 'string',
+                    description: 'Date of publication'
+                  },
+                  ad_type: {
+                    type: 'string',
+                    description: 'Type of advertisement'
+                  },
+                  units: {
+                    type: 'number',
+                    description: 'Number of units'
+                  },
+                  color_specification: {
+                    type: 'string',
+                    description: 'Color specifications'
+                  },
+                  position: {
+                    type: 'string',
+                    description: 'Position of the advertisement'
+                  },
+                  net_rate: {
+                    type: 'string',
+                    description: 'Net rate per insertion'
+                  },
+                  net_cost: {
+                    type: 'string',
+                    description: 'Net cost for the placement'
+                  }
+                }
+              }
+            },
+            total_cost: {
+              type: 'string',
+              description: 'Total cost of all placements'
+            },
+            publication_name: {
+              type: 'string',
+              description: 'Name of the publication'
+            },
+            ad_type: {
+              type: 'string',
+              description: 'Type of advertisement'
+            },
+            position: {
+              type: 'string',
+              description: 'Position of the advertisement'
+            },
+            color_specification: {
+              type: 'string',
+              description: 'Color specifications'
+            },
+            total_insertions: {
+              type: 'number',
+              description: 'Total number of insertions'
+            },
+            net_rate: {
+              type: 'string',
+              description: 'Net rate per insertion'
+            },
+            special_instructions: {
+              type: 'string',
+              description: 'Special instructions for the placement'
+            },
+            production_contact_phone: {
+              type: 'string',
+              description: 'Phone number for production inquiries'
+            }
+          }
         }
       }
     }

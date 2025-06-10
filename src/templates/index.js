@@ -116,10 +116,12 @@ handlebars.registerHelper('sum', function(array, prop) {
 });
 
 handlebars.registerHelper('currency', function(value) {
-    if (typeof value !== 'number') {
-        value = Number(value);
+    if (typeof value === 'string') {
+        // Remove $ and commas
+        value = value.replace(/[$,]/g, '');
     }
-    if (isNaN(value)) return value;
+    value = Number(value);
+    if (isNaN(value)) return '—'; // Or return value if you prefer to show the original text
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 });
 
@@ -161,40 +163,45 @@ handlebars.registerHelper('toFileUrl', function(filePath) {
 });
 
 handlebars.registerHelper('formatDate', function(date, format) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    // A more robust solution might use a library like Moment.js or date-fns
-    // but for simplicity, we'll use Intl.DateTimeFormat.
-    // This basic implementation doesn't fully support arbitrary format strings
-    // like 'YYYY-MM-DD', but rather relies on Intl.DateTimeFormat options.
-    // For 'YYYY-MM-DD', you might need to construct it manually.
-
     const d = new Date(date);
-
-    // Check if the date is valid
     if (isNaN(d.getTime())) {
-        return 'Invalid Date'; // Or return original input, or throw error
+        return 'Invalid Date';
     }
 
     if (format === 'YYYY-MM-DD') {
-        const year = d.getFullYear(); // Use d directly
+        const year = d.getFullYear();
         const month = ('0' + (d.getMonth() + 1)).slice(-2);
         const day = ('0' + d.getDate()).slice(-2);
         return `${year}-${month}-${day}`;
     }
-
-    // Default or other formats handled by Intl.DateTimeFormat
-    try {
-        // Use d directly, and ensure options is always defined
-        return new Intl.DateTimeFormat('en-US', format ? JSON.parse(format) : options).format(d);
-    } catch (e) {
-        // Fallback for invalid format string (e.g., bad JSON)
-        // Still format the valid date 'd' using default options
-        return new Intl.DateTimeFormat('en-US', options).format(d);
+    if (format === 'MM/DD/YYYY') {
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const day = ('0' + d.getDate()).slice(-2);
+        const year = d.getFullYear();
+        return `${month}/${day}/${year}`;
     }
+    if (format === 'MM/DD/YYYY, h:mm A') {
+        const month = ('0' + (d.getMonth() + 1)).slice(-2);
+        const day = ('0' + d.getDate()).slice(-2);
+        const year = d.getFullYear();
+        let hours = d.getHours();
+        const minutes = ('0' + d.getMinutes()).slice(-2);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        return `${month}/${day}/${year}, ${hours}:${minutes} ${ampm}`;
+    }
+
+    // Default fallback
+    return d.toLocaleDateString('en-US');
 });
 
 handlebars.registerHelper('getCurrentYear', function() {
     return new Date().getFullYear();
+});
+
+handlebars.registerHelper('now', function() {
+    return new Date();
 });
 
 // Template registry methods
